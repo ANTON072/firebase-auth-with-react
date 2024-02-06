@@ -1,6 +1,5 @@
 // See: https://firebase.google.com/docs/auth/web/start?hl=ja&authuser=0
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAOs89nz08JfXMTEVMKeAobr4jnfdn-kS8",
@@ -11,9 +10,6 @@ const firebaseConfig = {
   appId: "1:641069045081:web:c0686ebdb3286bbb806848",
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
+const useFirebaseApp = () => initializeApp(firebaseConfig);
 
-// Initialize Firebase Authentication and get a reference to the service
-export const firebaseAuth = getAuth(firebaseApp);
-
-export default firebaseApp;
+export default useFirebaseApp;

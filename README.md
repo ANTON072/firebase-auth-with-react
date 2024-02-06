@@ -1,8 +1,5 @@
-# react-vite-ts-template
+# ReactでFirebase Authを利用するサンプル
 
-- Vite
-- React
-- TypeScript
-- Chakura UI
-- eslint-config-airbnb
-- prettier
+## リファレンス
+
+[ウェブサイトで Firebase Authentication を使ってみる](https://firebase.google.com/docs/auth/web/start?hl=ja&authuser=0)
