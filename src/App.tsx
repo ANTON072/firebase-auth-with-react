@@ -1,9 +1,13 @@
+import { RouterProvider } from "react-router-dom";
+
 import { ChakraProvider } from "@chakra-ui/react";
+
+import { router } from "@/features/application";
 
 function App() {
   return (
     <ChakraProvider>
-      <h1>Hello World.</h1>
+      <RouterProvider router={router} />
     </ChakraProvider>
   );
 }
