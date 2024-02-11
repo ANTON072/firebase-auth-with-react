@@ -17,7 +17,7 @@ export interface AuthState {
   user: User | undefined;
 }
 
-const initialState: AuthState = {
+export const initialState: AuthState = {
   status: "loading",
   user: undefined,
 };
