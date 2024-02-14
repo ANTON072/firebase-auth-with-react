@@ -1,12 +1,33 @@
+/* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Link as RouterLink } from "react-router-dom";
+import { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 import { Button, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { getAuth, signOut } from "firebase/auth";
 
 import { useAuthState } from "@/features/auth";
 
 function GlobalNav() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const auth = getAuth();
+
   const authState = useAuthState();
+
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      setIsLoading(true);
+      await signOut(auth);
+      navigate("/auth/sign-in");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Grid
@@ -38,7 +59,13 @@ function GlobalNav() {
         )}
         {authState.status === "login" && (
           <Flex gap={3}>
-            <Button colorScheme="teal">Sing out</Button>
+            <Button
+              colorScheme="teal"
+              onClick={handleSignOut}
+              isLoading={isLoading}
+            >
+              Sing out
+            </Button>
           </Flex>
         )}
       </GridItem>

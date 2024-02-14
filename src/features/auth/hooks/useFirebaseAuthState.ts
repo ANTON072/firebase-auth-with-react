@@ -37,7 +37,7 @@ const getStore = (app: FirebaseApp) => {
       // 戻り値で購読を解除が可能
       // https://firebase.google.com/docs/reference/js/auth.auth.md?hl=ja#authonauthstatechanged
       const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
+        if (user && user.emailVerified) {
           state = {
             status: "login",
             user,

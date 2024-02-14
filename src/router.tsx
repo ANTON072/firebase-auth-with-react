@@ -20,10 +20,6 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "password-reset",
-        element: <PasswordResetPage />,
-      },
-      {
         element: <AuthRoot />,
         path: "auth",
         children: [
@@ -34,6 +30,10 @@ const router = createBrowserRouter([
           {
             path: "sign-up",
             element: <SignUpPage />,
+          },
+          {
+            path: "password-reset",
+            element: <PasswordResetPage />,
           },
         ],
       },
