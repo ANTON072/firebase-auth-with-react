@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { Outlet, ScrollRestoration } from "react-router-dom";
 
 import { GlobalNav } from "@/features/application/components";

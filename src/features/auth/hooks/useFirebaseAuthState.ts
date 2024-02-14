@@ -14,12 +14,12 @@ const firebaseConfig = {
 
 export interface AuthState {
   status: "loading" | "login" | "logout";
-  user: User | undefined;
+  user: User | null;
 }
 
 export const initialState: AuthState = {
   status: "loading",
-  user: undefined,
+  user: null,
 };
 
 const getStore = (app: FirebaseApp) => {
@@ -45,7 +45,7 @@ const getStore = (app: FirebaseApp) => {
         } else {
           state = {
             status: "logout",
-            user: undefined,
+            user,
           };
         }
         callback();
