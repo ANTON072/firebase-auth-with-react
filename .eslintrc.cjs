@@ -60,5 +60,6 @@ module.exports = {
     // ReactをimportしなくてもJSXが使えるようにする
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
+    "react/require-default-props": "off",
   },
 };

@@ -1,11 +1,7 @@
 /* eslint-disable import/no-cycle */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
   Box,
   Button,
   Card,
@@ -23,28 +19,17 @@ import {
 } from "firebase/auth";
 
 import { useAlert } from "@/features/application";
-import { useAuthState } from "@/features/auth";
 
 function SignUpPage() {
   const auth = getAuth();
-
-  const authState = useAuthState();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const { AlertComponent, setAlert } = useAlert();
 
-  const handleSendEmailVerification = async () => {
-    try {
-      if (authState.user) {
-        await sendEmailVerification(authState.user);
-        setAlert({ message: "確認メールを送信しました", status: "success" });
-      }
-    } catch (error) {
-      console.error(error);
-      if (error instanceof Error) {
-        setAlert({ message: error.message, status: "error" });
-      }
+  const showError = (error: unknown) => {
+    if (error instanceof Error) {
+      setAlert({ message: error.message, status: "error" });
     }
   };
 
@@ -61,10 +46,7 @@ function SignUpPage() {
       await sendEmailVerification(auth.currentUser!);
       setAlert({ message: "確認メールを送信しました", status: "success" });
     } catch (error) {
-      console.error(error);
-      if (error instanceof Error) {
-        setAlert({ message: error.message, status: "error" });
-      }
+      showError(error);
     } finally {
       setIsLoading(false);
     }
@@ -79,31 +61,21 @@ function SignUpPage() {
         <form onSubmit={handleSubmit}>
           <Stack spacing={5}>
             {AlertComponent}
-            {authState.user && !authState.user.emailVerified && (
-              <Alert status="info" flexDirection="column" gap={2}>
-                <AlertDescription>確認メールを送信済みです</AlertDescription>
-                <Button
-                  size="sm"
-                  variant="link"
-                  onClick={handleSendEmailVerification}
-                >
-                  確認メールを再送信する
+            <>
+              <FormControl isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input type="email" name="email" required />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Password</FormLabel>
+                <Input type="password" name="password" required />
+              </FormControl>
+              <Box textAlign="right">
+                <Button colorScheme="teal" type="submit" isLoading={isLoading}>
+                  Sign up
                 </Button>
-              </Alert>
-            )}
-            <FormControl isRequired>
-              <FormLabel>Email</FormLabel>
-              <Input type="email" name="email" required />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Password</FormLabel>
-              <Input type="password" name="password" required />
-            </FormControl>
-            <Box textAlign="right">
-              <Button colorScheme="teal" type="submit" isLoading={isLoading}>
-                Sign up
-              </Button>
-            </Box>
+              </Box>
+            </>
           </Stack>
         </form>
       </CardBody>
