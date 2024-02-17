@@ -16,17 +16,16 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import { useAlert } from "@/features/application";
 
-import useRemindVerification from "../hooks/useRemindVerification";
+import RemindVerification from "../components/RemindVerification";
 
 function SignInPage() {
   const auth = getAuth();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { AlertComponent, setAlert } = useAlert();
+  const [isShowReminder, setIsShowReminder] = useState(false);
 
-  const { RemindVerificationComponent, setIsShowReminder } =
-    useRemindVerification();
+  const { AlertComponent, setAlert } = useAlert();
 
   const showError = (error: unknown) => {
     if (error instanceof Error) {
@@ -62,22 +61,20 @@ function SignInPage() {
         <form onSubmit={handleSubmit}>
           <Stack spacing={5}>
             {AlertComponent}
-            {RemindVerificationComponent}
-            <>
-              <FormControl isRequired>
-                <FormLabel>Email</FormLabel>
-                <Input type="email" name="email" required />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Password</FormLabel>
-                <Input type="password" name="password" required />
-              </FormControl>
-              <Box textAlign="right">
-                <Button colorScheme="teal" type="submit" isLoading={isLoading}>
-                  Sign up
-                </Button>
-              </Box>
-            </>
+            <RemindVerification isShow={isShowReminder} />
+            <FormControl isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input type="email" name="email" required />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Password</FormLabel>
+              <Input type="password" name="password" required />
+            </FormControl>
+            <Box textAlign="right">
+              <Button colorScheme="teal" type="submit" isLoading={isLoading}>
+                Sign up
+              </Button>
+            </Box>
           </Stack>
         </form>
       </CardBody>
