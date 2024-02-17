@@ -11,21 +11,27 @@ import {
   Heading,
   Input,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import { useAlert } from "@/features/application";
+import useFriendlyForwarding from "@/features/application/hooks/useFriendlyForwarding";
 
 import RemindVerification from "../components/RemindVerification";
 
 function SignInPage() {
   const auth = getAuth();
 
+  const toast = useToast();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [isShowReminder, setIsShowReminder] = useState(false);
 
   const { AlertComponent, alertError, clearAlert } = useAlert();
+
+  const { redirectBackOr } = useFriendlyForwarding();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,7 +43,15 @@ function SignInPage() {
 
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
-      if (!user.emailVerified) {
+      if (user.emailVerified) {
+        toast({
+          title: "ログインしました",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        redirectBackOr("/");
+      } else {
         setIsShowReminder(true);
       }
     } catch (error) {
