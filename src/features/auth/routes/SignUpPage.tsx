@@ -25,16 +25,11 @@ function SignUpPage() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { AlertComponent, setAlert } = useAlert();
-
-  const showError = (error: unknown) => {
-    if (error instanceof Error) {
-      setAlert({ message: error.message, status: "error" });
-    }
-  };
+  const { AlertComponent, alertError, alertSuccess, clearAlert } = useAlert();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    clearAlert();
     setIsLoading(true);
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email") as string;
@@ -44,9 +39,9 @@ function SignUpPage() {
       await createUserWithEmailAndPassword(auth, email, password);
       // 確認メールの送信
       await sendEmailVerification(auth.currentUser!);
-      setAlert({ message: "確認メールを送信しました", status: "success" });
+      alertSuccess("確認メールを送信しました");
     } catch (error) {
-      showError(error);
+      alertError(error);
     } finally {
       setIsLoading(false);
     }

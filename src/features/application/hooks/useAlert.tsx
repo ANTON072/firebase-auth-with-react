@@ -21,9 +21,26 @@ const useAlert = () => {
     );
   }, [alert]);
 
+  const alertError = (error: unknown) => {
+    if (error instanceof Error) {
+      setAlert({ message: error.message, status: "error" });
+    }
+  };
+
+  const alertSuccess = (message: string) => {
+    setAlert({ message, status: "success" });
+  };
+
+  const clearAlert = () => {
+    setAlert(null);
+  };
+
   return {
     AlertComponent,
     setAlert,
+    alertError,
+    alertSuccess,
+    clearAlert,
   };
 };
 

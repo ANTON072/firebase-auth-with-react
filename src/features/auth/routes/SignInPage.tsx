@@ -25,16 +25,11 @@ function SignInPage() {
 
   const [isShowReminder, setIsShowReminder] = useState(false);
 
-  const { AlertComponent, setAlert } = useAlert();
-
-  const showError = (error: unknown) => {
-    if (error instanceof Error) {
-      setAlert({ message: error.message, status: "error" });
-    }
-  };
+  const { AlertComponent, alertError, clearAlert } = useAlert();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    clearAlert();
     setIsLoading(true);
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email") as string;
@@ -46,7 +41,7 @@ function SignInPage() {
         setIsShowReminder(true);
       }
     } catch (error) {
-      showError(error);
+      alertError(error);
     } finally {
       setIsLoading(false);
     }
