@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { Box } from "@chakra-ui/react";
 
 import { useAuthState } from "@/features/auth";
@@ -12,6 +14,7 @@ function HomePage() {
       ) : (
         <h1>未ログイン</h1>
       )}
+      <Link to="/auth/sign-in">Sign in</Link>
     </Box>
   );
 }
