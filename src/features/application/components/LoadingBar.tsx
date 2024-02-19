@@ -8,6 +8,8 @@ import {
   useImperativeHandle,
 } from "react";
 
+import useInterval from "../hooks/useInterval";
+
 export type LoadingBarRef = {
   continuousStart: () => void;
   complete: () => void;
@@ -15,11 +17,14 @@ export type LoadingBarRef = {
 
 const COLOR = "red";
 const LOADER_SPEED = 500;
+const TRANSITION_TIME = 300;
+const WAITING_TIME = 300;
 
-const defaultProps = {
-  transitionTime: 300,
-  waitingTime: 300,
-} as const;
+const randomInt = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+
+const randomValue = (min: number, max: number) =>
+  Math.random() * (max - min + 1) + min;
 
 const initialLoaderStyle: CSSProperties = {
   height: "100%",
@@ -53,7 +58,7 @@ const LoadingBar = forwardRef<LoadingBarRef, {}>((props, ref) => {
   const isMounted = useRef(false);
   const [localProgress, localProgressSet] = useState<number>(0);
 
-  const pressedContinuous = useRef(false);
+  const pressedContinuous = useRef({ active: false });
 
   const [loaderStyle, loaderStyleSet] =
     useState<CSSProperties>(initialLoaderStyle);
@@ -68,21 +73,89 @@ const LoadingBar = forwardRef<LoadingBarRef, {}>((props, ref) => {
     };
   }, []);
 
+  const checkIfFull = (_progress: number) => {
+    if (_progress >= 100) {
+      // ちょっと待つ
+      loaderStyleSet({
+        ...loaderStyle,
+        width: "100%",
+      });
+      shadowStyleSet({
+        ...shadowStyle,
+        left: `${_progress - 10}%`,
+      });
+      setTimeout(() => {
+        if (!isMounted.current) {
+          return;
+        }
+
+        loaderStyleSet({
+          ...loaderStyle,
+          opacity: 0,
+          width: "100%",
+          transition: `all ${TRANSITION_TIME}ms ease-out`,
+        });
+
+        setTimeout(() => {
+          if (!isMounted.current) {
+            return;
+          }
+
+          if (pressedContinuous.current.active) {
+            localProgressSet(0);
+            pressedContinuous.current.active = false;
+            checkIfFull(0);
+          }
+        }, TRANSITION_TIME);
+      }, WAITING_TIME);
+    } else {
+      loaderStyleSet((_loaderStyle) => ({
+        ...loaderStyle,
+        width: `${_progress}%`,
+        opacity: 1,
+        transition: _progress > 0 ? `all ${LOADER_SPEED}ms ease` : "",
+      }));
+      shadowStyleSet({
+        ...shadowStyle,
+        left: `${_progress - 5.5}%`,
+        transition: _progress > 0 ? `all ${LOADER_SPEED}ms ease` : "",
+      });
+    }
+  };
+
   // 親コンポーネントにカスタムrefハンドルを公開する
   // https://ja.react.dev/reference/react/useImperativeHandle#exposing-a-custom-ref-handle-to-the-parent-component
   useImperativeHandle(ref, () => ({
     continuousStart() {
-      console.log("continuousStart");
+      const val = randomInt(10, 20);
+
+      pressedContinuous.current.active = true;
+
+      localProgressSet(val);
+      checkIfFull(val);
     },
     complete() {
-      console.log("complete");
+      localProgressSet(100);
+      checkIfFull(100);
     },
   }));
 
+  useInterval(() => {
+    const minValue = Math.min(10, (100 - localProgress) / 5);
+    const maxValue = Math.min(20, (100 - localProgress) / 3);
+
+    const random = randomValue(minValue, maxValue);
+
+    if (localProgress + random < 95) {
+      localProgressSet(localProgress + random);
+      checkIfFull(localProgress + random);
+    }
+  }, pressedContinuous.current.active);
+
   return (
-    <div>
-      <div>
-        <div />
+    <div style={loaderContainerStyle}>
+      <div style={loaderStyle}>
+        <div style={shadowStyle} />
       </div>
     </div>
   );
